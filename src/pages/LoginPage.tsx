@@ -5,8 +5,8 @@ import { useNavigate } from "react-router-dom";
 
 export default function LoginPage() {
 
-    const [email, setEmail] = useState<String>("tom@gmail.com")
-    const [password, setPassword] = useState<String>("11111");
+    const [email, setEmail] = useState<String>("stas@gmail.com")
+    const [password, setPassword] = useState<String>("1234");
     const navigate = useNavigate()
 
     const handleEmail = (evt : ChangeEvent<HTMLInputElement>) => {
@@ -17,7 +17,7 @@ export default function LoginPage() {
     }
 
     const handleLogin = () => {
-        fetch('http://localhost:5262/login', {
+        fetch('http://localhost:5262/api/auth/login', {
             method: 'POST',
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({

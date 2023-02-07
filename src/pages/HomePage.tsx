@@ -3,8 +3,10 @@ import { decrement, increment, selectCount } from '../store/sliceReduces'
 import { ButtonBase } from '@mui/material';
 import { ChangeEvent, useEffect, useState, useRef, KeyboardEventHandler } from 'react'
 import Button from '@mui/material/Button';
+import { getUsersListAsync } from '@/api/users';
 import TextField from '@mui/material/TextField';
 import * as SignalR from '@microsoft/signalr'
+import UserDTO from '@/types/UserDTO';
 
 export default function HomePage() {
     const count = useSelector(selectCount)
@@ -18,6 +20,8 @@ export default function HomePage() {
     }
     const [message, setMessage] = useState<String>("");
     const [messages, setMessages] = useState<String[]>([])
+    const [users, setUsers] = useState<UserDTO[]>([]);
+    const [selectedUser, setSelectedUser] = useState<UserDTO | null>(null);
 
     let [connection, setConnection] = useState<SignalR.HubConnection | null>(null);
 
@@ -29,6 +33,9 @@ export default function HomePage() {
     useEffect(() => {
         let token: string = localStorage.getItem("token")!;
         console.log(token);
+        getUsersListAsync().then(res => {
+            setUsers(res)
+        })
         const newConnection = new SignalR.HubConnectionBuilder()
             .withUrl('http://localhost:5262/chat', {
                 accessTokenFactory: () => token
@@ -72,7 +79,7 @@ export default function HomePage() {
 
     const handleClick = () => {
         if (connection) {
-            connection.invoke("Send", message, 'sam@gmail.com').then(() => {
+            connection.invoke("Send", message, selectedUser?.email).then(() => {
                 if (msgs.current && msgs.current.scrollTop) {
 
                     msgs.current.scrollTop = msgs.current?.scrollHeight + 100
@@ -97,6 +104,10 @@ export default function HomePage() {
 
     }
 
+    const selectUser = (user : UserDTO) => {
+        setSelectedUser(user)
+    }
+
     const chats = Array.from({ length: 100 }, (_, idx) => {
         return {
             name: `Chat ${idx}`,
@@ -119,14 +130,14 @@ export default function HomePage() {
                     <TextField fullWidth={true} variant="outlined" placeholder='Search' className="text-white rounded-full" />
                 </div> */}
                 <div className='p-2 overflow-auto h-full'>
-                    {chats.map(el => <ButtonBase className='w-full' key={el.id}>
-                        <div className='flex w-full hover:bg-neutral-600 rounded p-2 transition-all cursor-pointer'>
+                    {users.map(el => <ButtonBase onClick={() => selectUser(el)} className='w-full' key={el.id}>
+                        <div className='flex border-neutral-500 border border-solid mb-2 shadow-sm w-full hover:bg-neutral-600 rounded p-2 transition-all cursor-pointer'>
                             <div className='bg-red-500 h-12 w-12 rounded-full mr-2'>
 
                             </div>
                             <div className='flex flex-col items-start'>
                                 <h3 className='text-white font-bold'>{el.name}</h3>
-                                <p className='text-gray-400'>{el.message}</p>
+                                {/* <p className='text-gray-400'>{el.message}</p> */}
                             </div>
                         </div>
                     </ButtonBase>)}
