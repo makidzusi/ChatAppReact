@@ -7,13 +7,15 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import {
   createBrowserRouter,
   RouterProvider,
-  NavLink
 } from "react-router-dom";
-import { CHAT } from './constants/routes';
+
+import { CHAT, SIGNIN, SIGNUP } from './constants/routes';
 import { Provider } from 'react-redux'
 import store from './store/store'
 import HomePage from './pages/HomePage';
-import LoginPage from './pages/LoginPage';
+import ChatPage from './pages/ChatPage';
+import SignInPage from './pages/SignInPage';
+import SignUpPage from './pages/SignUpPage';
 
 const router = createBrowserRouter([
   {
@@ -25,8 +27,16 @@ const router = createBrowserRouter([
     element: <App />,
   },
   {
-    path: '/login',
-    element: <LoginPage/>
+    path: SIGNIN,
+    element: <SignInPage />,
+  },
+  {
+    path: SIGNUP,
+    element: <SignUpPage/>
+  },
+  {
+    path: '/msg',
+    element: <ChatPage/>
   }
 ]);
 
