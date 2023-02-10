@@ -24,7 +24,7 @@ const router = createBrowserRouter([
   },
   {
     path: CHAT,
-    element: <App />,
+    element: <HomePage/>,
   },
   {
     path: SIGNIN,
